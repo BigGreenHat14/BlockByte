@@ -1,2 +1,2 @@
-#Nice Try!
+#put login here
 scratchlogin = {username:"",password:""}
