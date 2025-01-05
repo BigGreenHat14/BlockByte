@@ -29,6 +29,7 @@ def load_data():
         return ({},{})
 
 import scratchattach as sa
+from swear_provention import Filter
 import requests
 import bghsecrets
 import math
@@ -49,6 +50,8 @@ def login(token):
         return "x"
 @client.request
 def signup(username):
+    if username != Filter(username):
+        return "b"
     if username in list(users.keys()):
         return "x"
     uuid = get_uuid()
