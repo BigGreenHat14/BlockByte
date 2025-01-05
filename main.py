@@ -1,3 +1,5 @@
+# I wouldn't recommend looking through my code, for your sanity
+
 class User:
     def __init__(self,uuid,name):
         self.uuid = uuid
