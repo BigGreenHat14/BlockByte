@@ -50,8 +50,7 @@ def login(token):
         return "x"
 @client.request
 def signup(username):
-    if username != Filter(username):
-        return "b"
+    username == Filter(username)
     if username in list(users.keys()):
         return "x"
     uuid = get_uuid()
