@@ -116,9 +116,9 @@ def init_project(project_id):
     return client
 
 # Add projects
-def add_project(project_id, username, password):
+def add_project(project_id):
     if project_id not in projects:
-        client = init_project(project_id, username, password)
+        client = init_project(project_id)
         projects[project_id] = client
     else:
         print(f"Project {project_id} is already initialized.")
