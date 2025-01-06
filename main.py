@@ -1,3 +1,9 @@
+############
+# Settings #
+############
+USERNAME = ""
+PASSWORD = ""
+############
 import pickle
 import os
 import scratchattach as sa
@@ -47,7 +53,7 @@ def get_uuid():
 
 # Project initialization
 def init_project(project_id):
-    session = sa.login("", "")
+    session = sa.login(USERNAME, PASSWORD)
     cloud = session.connect_tw_cloud(project_id, contact="@BigGreenHat on Scratch")
     client = cloud.requests()
 
@@ -63,6 +69,7 @@ def init_project(project_id):
 
     @client.request
     def signup(username):
+        print(users)
         if username in list(users.keys()):
             return "x"
         uuid = get_uuid()
@@ -80,7 +87,7 @@ def init_project(project_id):
             toreturn.append(user.theme)
             toreturn += list(reversed(user.notifications))
         except Exception as e:
-            toreturn = ["Invalid Token, please notify me", "0", str(type(e)), str(e)]
+            toreturn = ["Invalid Token, reload, if still broken, ask me", "0", str(type(e)), str(e)]
         save_data(project_id, userbytoken, users)
         return toreturn
 
@@ -103,8 +110,10 @@ def init_project(project_id):
 
     @client.request
     def set_theme(token, num):
-        userbytoken[token].theme = num
-        save_data(project_id, userbytoken, users)
+        try:
+            userbytoken[token].theme = num
+            save_data(project_id, userbytoken, users)
+        except:None
         return "k"
 
     @client.event
