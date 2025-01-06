@@ -1,14 +1,38 @@
-# I wouldn't recommend looking through my code, for your sanity
+import pickle
+import os
+import scratchattach as sa
+import requests
+import bghsecrets
+import math
 
+# Global storage for projects
+projects = {}
+
+# Utility functions for persistent data storage
+def save_data(project_id, userbytoken, users):
+    with open(f"blockbytedb_{project_id}", "wb") as f:
+        pickle.dump((userbytoken, users), f)
+
+def load_data(project_id):
+    if os.path.exists(f"blockbytedb_{project_id}"):
+        with open(f"blockbytedb_{project_id}", "rb") as f:
+            return pickle.load(f)
+    else:
+        return ({}, {})
+
+# User class
 class User:
-    def __init__(self,uuid,name):
+    def __init__(self, uuid, name):
         self.uuid = uuid
         self.name = name
+        self.theme = "56.7"
         self.balance = 100.0
         self.notifications = []
+
     def get_balance(self):
         return round(self.balance)
-    def transfer(self,amount,recipient): # type: ignore
+
+    def transfer(self, amount, recipient):
         if amount > self.balance or amount < 1:
             return "x"
         self.balance -= amount
@@ -16,75 +40,88 @@ class User:
         recipient.notifications.append(f"{self.name} sent you {amount} BlockByte{'' if amount == 1 else 's'}!")
         return "k"
 
-import pickle
-import os
-def save_data(userbytoken,users):
-    f = open("blockbytedb","wb")
-    f.write(pickle.dumps((userbytoken,users)))
-def load_data():
-    if os.path.exists("blockbytedb"):
-        f = open("blockbytedb","rb")
-        return pickle.loads(f.read())
-    else:
-        return ({},{})
-
-import scratchattach as sa
-from swear_provention import Filter
-import requests
-import bghsecrets
-import math
-session = sa.login(**bghsecrets.scratchlogin)
-cloud = session.connect_tw_cloud("1116465685",contact=f"@{bghsecrets.scratchlogin["username"]} on Scratch")
-client = cloud.requests()
-userbytoken, users = load_data()
-rooms = {}
-connectedto = {}
+# Generate UUID
 def get_uuid():
     import uuid
     return str(uuid.uuid4())
-@client.request
-def login(token):
-    try:
-        return list(users.keys())[list(users.values()).index(token)]
-    except:
-        return "x"
-@client.request
-def signup(username):
-    username == Filter(username)
-    if username in list(users.keys()):
-        return "x"
-    uuid = get_uuid()
-    users[username] = uuid
-    userbytoken[uuid] = User(uuid,username)
-    save_data(userbytoken,users)
-    return uuid
-@client.request
-def info(token):
-    try:
-        toreturn = []
-        user = userbytoken[token]
-        toreturn.append(user.balance)
-        toreturn += list(reversed(user.notifications))
-    except:
-        toreturn = ["Invalid Token, please notify me","pls restart"]
-    save_data(userbytoken,users)
-    return toreturn
-@client.request
-def dismiss(token):
-    userbytoken[token].notifications = []
-    save_data(userbytoken,users)
-    return "k"
-@client.request
-def transfer(token,othername,amount):
-    try:
-        user = userbytoken[token]
-        user2 = userbytoken[users[othername]]
-        toreturn = user.transfer(int(amount),user2)
-        save_data(userbytoken,users)
+
+# Project initialization
+def init_project(project_id):
+    session = sa.login("", "")
+    cloud = session.connect_tw_cloud(project_id, contact="@BigGreenHat on Scratch")
+    client = cloud.requests()
+
+    userbytoken, users = load_data(project_id)
+
+    # Register project-specific client event handlers
+    @client.request
+    def login(token):
+        try:
+            return list(users.keys())[list(users.values()).index(token)]
+        except:
+            return "x"
+
+    @client.request
+    def signup(username):
+        if username in list(users.keys()):
+            return "x"
+        uuid = get_uuid()
+        users[username] = uuid
+        userbytoken[uuid] = User(uuid, username)
+        save_data(project_id, userbytoken, users)
+        return uuid
+
+    @client.request
+    def info(token):
+        try:
+            toreturn = []
+            user = userbytoken[token]
+            toreturn.append(user.balance)
+            toreturn.append(user.theme)
+            toreturn += list(reversed(user.notifications))
+        except Exception as e:
+            toreturn = ["Invalid Token, please notify me", "0", str(type(e)), str(e)]
+        save_data(project_id, userbytoken, users)
         return toreturn
-    except:
-        return "x"
-@client.event
-def on_ready():
-    print("gerbert da serber is run :D")
-client.start(thread=False)
+
+    @client.request
+    def dismiss(token):
+        userbytoken[token].notifications = []
+        save_data(project_id, userbytoken, users)
+        return "k"
+
+    @client.request
+    def transfer(token, othername, amount):
+        try:
+            user = userbytoken[token]
+            user2 = userbytoken[users[othername]]
+            toreturn = user.transfer(int(amount), user2)
+            save_data(project_id, userbytoken, users)
+            return toreturn
+        except:
+            return "x"
+
+    @client.request
+    def set_theme(token, num):
+        userbytoken[token].theme = num
+        save_data(project_id, userbytoken, users)
+        return "k"
+
+    @client.event
+    def on_ready():
+        print(f"Server for project {project_id} is running :D")
+
+    # Start the client
+    client.start(thread=True)
+    return client
+
+# Add projects
+def add_project(project_id, username, password):
+    if project_id not in projects:
+        client = init_project(project_id, username, password)
+        projects[project_id] = client
+    else:
+        print(f"Project {project_id} is already initialized.")
+
+# Example: Adding multiple projects
+add_project("1116465685")
