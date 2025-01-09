@@ -10,7 +10,6 @@ import scratchattach as sa
 import requests
 import bghsecrets
 import math
-
 # Global storage for projects
 projects = {}
 
