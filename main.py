@@ -132,5 +132,8 @@ def add_project(project_id):
     else:
         print(f"Project {project_id} is already initialized.")
 
-# Example: Adding multiple projects
-add_project("1116465685")
+f = open("servelist.txt","r")
+projects = f.read().splitlines()
+f.close()
+for project in projects:
+    add_project(project)
