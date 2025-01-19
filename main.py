@@ -117,6 +117,24 @@ def init_project(project_id):
         except:None
         return "k"
 
+    # Leaderboard feature
+    @client.request
+    def leaderboard():
+        try:
+            leaderboard_data = sorted(userbytoken.values(), key=lambda u: u.balance, reverse=True)
+            return [f"{user.name}: {user.get_balance()}" for user in leaderboard_data]
+        except Exception as e:
+            return f"{str(type(e))}: {str(e)}"
+
+    # Find another user's balance
+    @client.request
+    def get_balance(othername):
+        try:
+            user = userbytoken[users[othername]]
+            return str(user.get_balance())
+        except:
+            return "x"
+
     @client.event
     def on_ready():
         print(f"Server for project {project_id} is running :D")
@@ -133,8 +151,5 @@ def add_project(project_id):
     else:
         print(f"Project {project_id} is already initialized.")
 
-f = open("servelist.txt","r")
-projects = f.read().splitlines()
-f.close()
-for project in projects:
-    add_project(project)
+##=#= Add more projects here =#=##
+add_project(1116465685)
