@@ -4,6 +4,8 @@
 USERNAME = ""
 PASSWORD = ""
 ############
+if not (USERNAME and PASSWORD):
+    raise Exception("Username or Password is blank, please enter in the details for the server account")
 import pickle
 import os
 import scratchattach as sa
