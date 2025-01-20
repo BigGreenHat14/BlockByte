@@ -44,7 +44,7 @@ def get_uuid():
     return str(uuid.uuid4())
 
 # Project initialization
-async def init_project(username, password, project_id):
+async def init_project(project_id):
     cloud = sa.get_tw_cloud(project_id, contact="@BigGreenHat on Scratch")
     client = cloud.requests()
 
