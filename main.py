@@ -144,12 +144,17 @@ def init_project(project_id):
     return client
 
 # Add projects
-def add_project(project_id):
+def _add_project(project_id):
     if project_id not in projects:
         client = init_project(project_id)
         projects[project_id] = client
     else:
         print(f"Project {project_id} is already initialized.")
+def add_project(projectid):
+    import threading
+    threading.Thread(target=_add_project, args=(projectid,)).start()
 
 ##=#= Add more projects here =#=##
 add_project(1116465685)
+add_project(1116273299)
+while True: None
