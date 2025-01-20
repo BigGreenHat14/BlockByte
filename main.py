@@ -44,9 +44,8 @@ def get_uuid():
     return str(uuid.uuid4())
 
 # Project initialization
-def init_project(username, password, project_id):
-    session = sa.login(username, password)  # Use a separate session
-    cloud = session.connect_tw_cloud(project_id, contact="@BigGreenHat on Scratch")
+def init_project(project_id):
+    cloud = session.get_tw_cloud(project_id)
     client = cloud.requests()
 
     userbytoken, users = load_data(project_id)
@@ -133,13 +132,11 @@ def add_project(username, password, project_id):
 ############
 # Settings #
 ############
-USERNAME = "YourUsername"
-PASSWORD = "YourPassword"
 PROJECT_IDS = [1116465685, 1116273299]
 
 # Start projects
 for project_id in PROJECT_IDS:
-    threading.Thread(target=add_project, args=(USERNAME, PASSWORD, project_id)).start()
+    threading.Thread(target=add_project, args=(project_id,)).start()
 
 while True:
     pass
