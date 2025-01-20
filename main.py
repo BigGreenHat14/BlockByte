@@ -14,6 +14,7 @@ import bghsecrets
 import math
 # Global storage for projects
 projects = {}
+session = sa.login(USERNAME, PASSWORD)
 
 # Utility functions for persistent data storage
 def save_data(project_id, userbytoken, users):
@@ -54,7 +55,6 @@ def get_uuid():
 
 # Project initialization
 def init_project(project_id):
-    session = sa.login(USERNAME, PASSWORD)
     cloud = session.connect_tw_cloud(project_id, contact="@BigGreenHat on Scratch")
     client = cloud.requests()
 
