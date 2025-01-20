@@ -1,20 +1,10 @@
-############
-# Settings #
-############
-USERNAME = ""
-PASSWORD = ""
-############
-if not (USERNAME and PASSWORD):
-    raise Exception("Username or Password is blank, please enter in the details for the server account")
 import pickle
 import os
 import scratchattach as sa
-import requests
-import bghsecrets
-import math
+import threading
+
 # Global storage for projects
 projects = {}
-session = sa.login(USERNAME, PASSWORD)
 
 # Utility functions for persistent data storage
 def save_data(project_id, userbytoken, users):
@@ -54,13 +44,13 @@ def get_uuid():
     return str(uuid.uuid4())
 
 # Project initialization
-def init_project(project_id):
+def init_project(username, password, project_id):
+    session = sa.login(username, password)  # Use a separate session
     cloud = session.connect_tw_cloud(project_id, contact="@BigGreenHat on Scratch")
     client = cloud.requests()
 
     userbytoken, users = load_data(project_id)
 
-    # Register project-specific client event handlers
     @client.request
     def login(token):
         try:
@@ -70,7 +60,6 @@ def init_project(project_id):
 
     @client.request
     def signup(username):
-        print(users)
         if username in list(users.keys()):
             return "x"
         uuid = get_uuid()
@@ -82,15 +71,10 @@ def init_project(project_id):
     @client.request
     def info(token):
         try:
-            toreturn = []
             user = userbytoken[token]
-            toreturn.append(user.balance)
-            toreturn.append(user.theme)
-            toreturn += list(reversed(user.notifications))
+            return [user.balance, user.theme] + list(reversed(user.notifications))
         except Exception as e:
-            toreturn = ["Invalid Token, reload, if still broken, ask me", "0", str(type(e)), str(e)]
-        save_data(project_id, userbytoken, users)
-        return toreturn
+            return ["Invalid Token", "0", str(type(e)), str(e)]
 
     @client.request
     def dismiss(token):
@@ -103,30 +87,18 @@ def init_project(project_id):
         try:
             user = userbytoken[token]
             user2 = userbytoken[users[othername]]
-            toreturn = user.transfer(int(amount), user2)
-            save_data(project_id, userbytoken, users)
-            return toreturn
+            return user.transfer(int(amount), user2)
         except:
             return "x"
 
     @client.request
-    def set_theme(token, num):
-        try:
-            userbytoken[token].theme = num
-            save_data(project_id, userbytoken, users)
-        except:None
-        return "k"
-
-    # Leaderboard feature
-    @client.request
     def leaderboard():
         try:
-            leaderboard_data = sorted(userbytoken.values(), key=lambda u: u.balance, reverse=True)
-            return [f"{user.name}: {user.get_balance()}" for user in leaderboard_data]
+            sorted_users = sorted(userbytoken.values(), key=lambda u: u.balance, reverse=True)
+            return [f"{user.name}: {user.get_balance()}" for user in sorted_users]
         except Exception as e:
-            return f"{str(type(e))}: {str(e)}"
+            return [str(type(e)), str(e)]
 
-    # Find another user's balance
     @client.request
     def get_balance(othername):
         try:
@@ -135,26 +107,39 @@ def init_project(project_id):
         except:
             return "x"
 
+    @client.request
+    def set_theme(token, theme):
+        try:
+            userbytoken[token].theme = theme
+            save_data(project_id, userbytoken, users)
+            return "k"
+        except:
+            return "x"
+
     @client.event
     def on_ready():
         print(f"Server for project {project_id} is running :D")
 
-    # Start the client
     client.start(thread=True)
     return client
 
 # Add projects
-def _add_project(project_id):
+def add_project(username, password, project_id):
     if project_id not in projects:
-        client = init_project(project_id)
-        projects[project_id] = client
+        projects[project_id] = init_project(username, password, project_id)
     else:
         print(f"Project {project_id} is already initialized.")
-def add_project(projectid):
-    import threading
-    threading.Thread(target=_add_project, args=(projectid,)).start()
 
-##=#= Add more projects here =#=##
-add_project(1116465685)
-add_project(1116273299)
-while True: None
+############
+# Settings #
+############
+USERNAME = "YourUsername"
+PASSWORD = "YourPassword"
+PROJECT_IDS = [1116465685, 1116273299]
+
+# Start projects
+for project_id in PROJECT_IDS:
+    threading.Thread(target=add_project, args=(USERNAME, PASSWORD, project_id)).start()
+
+while True:
+    pass
