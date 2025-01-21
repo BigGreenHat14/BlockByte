@@ -1,8 +1,17 @@
+############
+# Settings #
+############
+USERNAME = ""
+PASSWORD = ""
+############
+if not (USERNAME and PASSWORD):
+    raise Exception("Username or Password is blank, please enter in the details for the server account")
 import pickle
 import os
 import scratchattach as sa
-import threading
-
+import requests
+import bghsecrets
+import math
 # Global storage for projects
 projects = {}
 
@@ -45,11 +54,13 @@ def get_uuid():
 
 # Project initialization
 def init_project(project_id):
-    cloud = sa.get_tw_cloud(project_id)
+    session = sa.login(USERNAME, PASSWORD)
+    cloud = session.connect_tw_cloud(project_id, contact="@BigGreenHat on Scratch")
     client = cloud.requests()
 
     userbytoken, users = load_data(project_id)
 
+    # Register project-specific client event handlers
     @client.request
     def login(token):
         try:
@@ -59,6 +70,7 @@ def init_project(project_id):
 
     @client.request
     def signup(username):
+        print(users)
         if username in list(users.keys()):
             return "x"
         uuid = get_uuid()
@@ -70,10 +82,15 @@ def init_project(project_id):
     @client.request
     def info(token):
         try:
+            toreturn = []
             user = userbytoken[token]
-            return [user.balance, user.theme] + list(reversed(user.notifications))
+            toreturn.append(user.balance)
+            toreturn.append(user.theme)
+            toreturn += list(reversed(user.notifications))
         except Exception as e:
-            return ["Invalid Token", "0", str(type(e)), str(e)]
+            toreturn = ["Invalid Token, reload, if still broken, ask me", "0", str(type(e)), str(e)]
+        save_data(project_id, userbytoken, users)
+        return toreturn
 
     @client.request
     def dismiss(token):
@@ -86,18 +103,29 @@ def init_project(project_id):
         try:
             user = userbytoken[token]
             user2 = userbytoken[users[othername]]
-            return user.transfer(int(amount), user2)
+            toreturn = user.transfer(int(amount), user2)
+            save_data(project_id, userbytoken, users)
+            return toreturn
         except:
             return "x"
 
     @client.request
+    def set_theme(token, num):
+        try:
+            userbytoken[token].theme = num
+            save_data(project_id, userbytoken, users)
+        except:None
+        return "k"
+
+    # Leaderboard feature
+    @client.request
     def leaderboard():
         try:
-            sorted_users = sorted(userbytoken.values(), key=lambda u: u.balance, reverse=True)
-            return [f"{user.name}: {user.get_balance()}" for user in sorted_users]
+            leaderboard_data = sorted(userbytoken.values(), key=lambda u: u.balance, reverse=True)
+            return [f"{user.name}: {user.get_balance()}" for user in leaderboard_data]
         except Exception as e:
-            return [str(type(e)), str(e)]
-
+            return f"{str(type(e))}: {str(e)}"
+    # Find another user's balance
     @client.request
     def get_balance(othername):
         try:
@@ -105,38 +133,13 @@ def init_project(project_id):
             return str(user.get_balance())
         except:
             return "x"
-
-    @client.request
-    def set_theme(token, theme):
-        try:
-            userbytoken[token].theme = theme
-            save_data(project_id, userbytoken, users)
-            return "k"
-        except:
-            return "x"
-
     @client.event
     def on_ready():
         print(f"Server for project {project_id} is running :D")
 
+    # Start the client
     client.start(thread=True)
     return client
 
 # Add projects
-def add_project(project_id):
-    if project_id not in projects:
-        projects[project_id] = init_project(project_id)
-    else:
-        print(f"Project {project_id} is already initialized.")
-
-############
-# Settings #
-############
-PROJECT_IDS = [1116465685, 1116273299]
-
-# Start projects
-for project_id in PROJECT_IDS:
-    threading.Thread(target=add_project, args=(project_id,)).start()
-
-while True:
-    pass
+init_project(1116273299)
