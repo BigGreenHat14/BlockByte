@@ -1,11 +1,3 @@
-############
-# Settings #
-############
-USERNAME = ""
-PASSWORD = ""
-############
-if not (USERNAME and PASSWORD):
-    raise Exception("Username or Password is blank, please enter in the details for the server account")
 import pickle
 import os
 import scratchattach as sa
@@ -138,8 +130,8 @@ def init_project(project_id):
         print(f"Server for project {project_id} is running :D")
 
     # Start the client
-    client.start(thread=True)
+    client.start(thread=False)
     return client
 
-# Add projects
+# Set project
 init_project(1116273299)
