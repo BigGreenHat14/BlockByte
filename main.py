@@ -46,8 +46,7 @@ def get_uuid():
 
 # Project initialization
 def init_project(project_id):
-    session = sa.login(USERNAME, PASSWORD)
-    cloud = session.connect_tw_cloud(project_id, contact="@BigGreenHat on Scratch")
+    cloud = sa.get_tw_cloud(project_id, contact="@BigGreenHat on Scratch")
     client = cloud.requests()
 
     userbytoken, users = load_data(project_id)
