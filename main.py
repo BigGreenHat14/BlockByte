@@ -1,11 +1,11 @@
+#yes i did partially use chatgpt thank you for asking - every dev in 2025
+
 import pickle
 import os
 import scratchattach as sa
 import requests
 import bghsecrets
 import math
-# Global storage for projects
-projects = {}
 
 # Utility functions for persistent data storage
 def save_data(project_id, userbytoken, users):
