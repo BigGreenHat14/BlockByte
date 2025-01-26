@@ -127,6 +127,9 @@ def init_project(project_id):
             return str(user.get_balance())
         except:
             return "x"
+    @client.request
+    def ping():
+        return "k"
     @client.event
     def on_ready():
         print(f"Server for project {project_id} is running :D")
