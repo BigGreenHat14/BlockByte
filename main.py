@@ -21,12 +21,13 @@ def load_data(project_id):
 
 # User class
 class User:
-    def __init__(self, uuid, name):
+    def __init__(self, uuid, name, password):
         self.uuid = uuid
         self.name = name
         self.theme = "56.7"
         self.balance = 100.0
         self.notifications = []
+        self.password = password
 
     def get_balance(self):
         return round(self.balance)
@@ -51,22 +52,25 @@ def init_project(project_id):
 
     userbytoken, users = load_data(project_id)
 
-    # Register project-specific client event handlers
     @client.request
-    def login(token):
+    def login(username,password):
         try:
-            return list(users.keys())[list(users.values()).index(token)]
+            user = userbytoken[users[username]]
+            if user.password == password:
+                return user.uuid
+            else:
+                return "x"
         except:
             return "x"
 
     @client.request
-    def signup(username):
+    def signup(username,password):
         print(users)
         if username in list(users.keys()):
             return "x"
         uuid = get_uuid()
         users[username] = uuid
-        userbytoken[uuid] = User(uuid, username)
+        userbytoken[uuid] = User(uuid, username, password)
         save_data(project_id, userbytoken, users)
         return uuid
 
