@@ -135,6 +135,7 @@ def init_project(project_id):
                 uuid = get_uuid()
                 users[user.name] = uuid
                 user.uuid = uuid
+                save_data(project_id, userbytoken, users)
                 return uuid
             except:
                 return "x"
