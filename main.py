@@ -4,7 +4,6 @@ import pickle
 import os
 import scratchattach as sa
 import requests
-import bghsecrets
 import math
 
 # Utility functions for persistent data storage
