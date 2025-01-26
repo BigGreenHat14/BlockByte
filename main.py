@@ -128,16 +128,16 @@ def init_project(project_id):
         except:
             return "x"
     @client.request
-def change_password(token,password):
-        try:
-            user = userbytoken[token]
-            user.password = password
-            uuid = get_uuid()
-            users[user.name] = uuid
-            user.uuid = uuid
-            return uuid
-        except:
-            return "x"
+    def change_password(token,password):
+            try:
+                user = userbytoken[token]
+                user.password = password
+                uuid = get_uuid()
+                users[user.name] = uuid
+                user.uuid = uuid
+                return uuid
+            except:
+                return "x"
     @client.event
     def on_ready():
         print(f"Server for project {project_id} is running :D")
