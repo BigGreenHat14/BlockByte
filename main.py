@@ -99,9 +99,10 @@ def init_project(project_id):
             user = userbytoken[token]
             toreturn.append(user.balance)
             toreturn.append(user.theme)
+            toreturn.append(list(userbytoken.values()).index(user))
             toreturn += list(reversed(user.notifications))
         except Exception as e:
-            toreturn = ["Invalid Token, reload, if still broken, ask me", "0", str(type(e)), str(e)]
+            toreturn = ["Invalid Token, reload, if still broken, ask me", "0", "0", str(type(e)), str(e)]
         save_data(project_id, userbytoken, users)
         return toreturn
 
@@ -129,7 +130,6 @@ def init_project(project_id):
             save_data(project_id, userbytoken, users)
         except:None
         return "k"
-
     # Leaderboard feature
     @client.request
     def leaderboard():
