@@ -154,7 +154,8 @@ def init_project(project_id):
                 uuid = get_uuid()
                 users[user.name] = uuid
                 user.uuid = uuid
-                usersbytoken[uuid] = usersbytoken[token]
+                from copy import deepcopy
+                usersbytoken[uuid] = deepcopy(usersbytoken[token])
                 del usersbytoken[token]
                 save_data(project_id, userbytoken, users)
                 return uuid
@@ -169,4 +170,5 @@ def init_project(project_id):
     return client
 
 # Set project
-init_project(1116465685)
+if __name__ == "__main__":
+   init_project(1116465685)
