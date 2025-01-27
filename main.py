@@ -72,8 +72,8 @@ def init_project(project_id):
         userbytoken[uuid] = User(uuid, username, password)
         save_data(project_id, userbytoken, users)
         return uuid
-    @client.request
-    def change_token(old_token):
+
+    def regenerate_token(old_token):
         try:
             user = userbytoken[old_token]
             if not user:
@@ -87,6 +87,11 @@ def init_project(project_id):
             return new_token
         except:
             return "x"
+
+    @client.request
+    def update_password(token,password):
+        userbytoken[token].password = password
+        return regenerate_token(token)
     @client.request
     def info(token):
         try:
