@@ -155,7 +155,8 @@ def init_project(project_id):
                 users[user.name] = uuid
                 user.uuid = uuid
                 from copy import deepcopy
-                usersbytoken[uuid] = deepcopy(usersbytoken[token])
+                usersbytoken[uuid] = deepcopy(user)
+                user = usersbytoken[uuid]
                 del usersbytoken[token]
                 save_data(project_id, userbytoken, users)
                 return uuid
