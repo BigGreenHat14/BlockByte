@@ -73,21 +73,34 @@ def init_project(project_id):
         save_data(project_id, userbytoken, users)
         return uuid
 
-    def regenerate_token(old_token):
-        try:
-            user = userbytoken[old_token]
-            if not user:
-                return "x"
-            new_token = get_uuid()
-            user.token = new_token
-            userbytoken[new_token] = user
-            user = userbytoken[new_token]
-            del userbytoken[old_token]
-            users[user.name] = new_token
-            save_data(project_id, userbytoken, users)
-            return new_token
-        except:
+def regenerate_token(old_token):
+    try:
+        if old_token not in userbytoken:
             return "x"
+
+        user = userbytoken[old_token]
+        new_token = get_uuid()
+
+        # Update user reference with new token
+        user.token = new_token
+        userbytoken[new_token] = user
+
+        # Ensure the old token is deleted after adding the new token
+        del userbytoken[old_token]
+
+        # Update users dictionary
+        users[user.name] = new_token
+
+        # Persist changes
+        save_data(project_id, userbytoken, users)
+
+        return new_token
+    except KeyError:
+        return "x"
+    except Exception as e:
+        print(f"Error in regenerate_token: {e}")
+        return "x"
+
 
     @client.request
     def update_password(token,password):
