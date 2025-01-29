@@ -83,6 +83,7 @@ def init_project(project_id):
             userbytoken[new_token] = user
             user = userbytoken[new_token]
             del userbytoken[old_token]
+            users[user.name] = new_token
             save_data(project_id, userbytoken, users)
             return new_token
         except:
