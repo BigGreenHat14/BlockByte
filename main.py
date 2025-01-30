@@ -73,7 +73,9 @@ def init_project(project_id):
         save_data(project_id, userbytoken, users)
         return uuid
 
+    #FOR DEV REASONS, DO NOT USE
     def regenerate_token(old_token):
+        raise Exception("pls dont be stupid")
         try:
             user = userbytoken[old_token]
             if not user:
