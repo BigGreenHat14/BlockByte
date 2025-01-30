@@ -46,7 +46,7 @@ def get_uuid():
 
 # Project initialization
 def init_project(project_id):
-    cloud = sa.get_tw_cloud(project_id, contact="@BigGreenHat on Scratch")
+    cloud = sa.get_tw_cloud(project_id,purpose="Blockbyte Server", contact="@BigGreenHat on Scratch")
     client = cloud.requests()
 
     userbytoken, users = load_data(project_id)
@@ -72,28 +72,6 @@ def init_project(project_id):
         userbytoken[uuid] = User(uuid, username, password)
         save_data(project_id, userbytoken, users)
         return uuid
-
-    #FOR DEV REASONS, DO NOT USE
-    def regenerate_token(old_token):
-        raise Exception("pls dont be stupid")
-        try:
-            user = userbytoken[old_token]
-            if not user:
-                return "x"
-            new_token = get_uuid()
-            user.token = new_token
-            userbytoken[new_token] = user
-            user = userbytoken[new_token]
-            del userbytoken[old_token]
-            save_data(project_id, userbytoken, users)
-            return new_token
-        except:
-            return "x"
-
-    @client.request
-    def update_password(token,password):
-        userbytoken[token].password = password
-        return regenerate_token(token)
     @client.request
     def info(token):
         try:
