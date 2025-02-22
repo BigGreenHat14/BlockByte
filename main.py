@@ -12,6 +12,7 @@ def set_main_variable(name: str, value):
     """Sets a variable in the caller's global scope."""
     caller_globals = inspect.currentframe().f_back.f_globals
     caller_globals[name] = value
+    setattr(sys.modules["__main__"],name,value)
 
 # Utility functions for persistent data storage
 def save_data(project_id, userbytoken, users):
