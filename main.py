@@ -141,8 +141,12 @@ def bbshell_mm():
     except:
         return
 def bbshell():
+    import requests
     version = 0.2
     print(f"Blockbyte Shell v{str(version)}")
+    newversion = int(requests.get("https://raw.githubusercontent.com/BigGreenHat14/BlockByte/refs/heads/main/latestver").text.strip())
+    if newversion > version:
+        print(f"!!! A new version of the BlockByte server is avaliable, v{str(newversion)} !!!\n(currently v{str(version)})\n")
     print("Before using, make sure blockbyte is not running!")
     print("")
     pid = input("Enter project ID > ")
