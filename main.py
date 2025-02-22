@@ -134,6 +134,44 @@ def init_project(project_id):
     client.start(thread=False)
     return client
 
+def bbshell_mm():
+    try:
+        while True:
+            exec(input ("BB >>> "))
+    except:
+        return
+def bbshell():
+    print("Blockbyte Shell v0.1")
+    print("Before using, make sure blockbyte is not running!")
+    print("")
+    pid = input("Enter project ID > ")
+    userbytoken, users = load_data(int(pid))
+    shell = not ("-c" in sys.orig_argv)
+    while True:
+        print("0. Exit")
+        print("1. Manual mode")
+        print("2. Reset token")
+        print("")
+        match input("Enter Number > ")
+            case 0:
+                save_data(pid,usersbytoken,users)
+                sys.exit(0)
+            case 1:
+                bbshell_mm()
+            case 2:
+                import copy
+                names = list(users.keys())
+                print(dict(enumerate(names)))
+                accindex = int(input("Enter Account Index > "))
+                olduuid = users[names[accindex]]
+                uuid = get_uuid()
+                userbytoken[olduuid].uuid = uuid
+                users[names[accindex]] = uuid
+                usersbytoken[uuid] = copy.copy(userbytoken[olduuid])
+                del userbytoken[olduuid]
+        save_data(pid,usersbytoken,users)
 # Set project
 if __name__ == "__main__":
    init_project(1116465685)
+else:
+    bbshell()
