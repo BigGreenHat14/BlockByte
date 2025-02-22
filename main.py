@@ -4,6 +4,7 @@ import pickle
 import os
 import scratchattach as sa
 import requests
+import sys
 import math
 
 import inspect
