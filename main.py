@@ -152,7 +152,7 @@ def bbshell():
         print("1. Manual mode")
         print("2. Reset token")
         print("")
-        match input("Enter Number > ")
+        match input("Enter Number > "):
             case 0:
                 save_data(pid,usersbytoken,users)
                 sys.exit(0)
