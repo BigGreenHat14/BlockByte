@@ -146,7 +146,7 @@ def bbshell():
     print(f"Blockbyte Shell v{str(version)}")
     newversion = float(requests.get("https://pastebin.com/raw/7zMi7wev").text.strip())
     if newversion > version:
-        print(f"!!! A new version of the BlockByte server is avaliable, v{str(newversion)} !!!\n(currently v{str(version)})\n")
+        print(f"\n!!! A new version of the BlockByte server and shell is avaliable, v{str(newversion)} !!!\n(currently v{str(version)})\n")
     print("Before using, make sure blockbyte isn't running!")
     print("")
     pid = input("Enter project ID > ")
