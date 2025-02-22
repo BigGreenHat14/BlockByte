@@ -6,6 +6,13 @@ import scratchattach as sa
 import requests
 import math
 
+import inspect
+
+def set_main_variable(name: str, value):
+    """Sets a variable in the caller's global scope."""
+    caller_globals = inspect.currentframe().f_back.f_globals
+    caller_globals[name] = value
+
 # Utility functions for persistent data storage
 def save_data(project_id, userbytoken, users):
     with open(f"blockbytedb_{project_id}", "wb") as f:
@@ -150,7 +157,7 @@ def bbshell():
     print("Before using, make sure blockbyte isn't running!")
     print("")
     pid = input("Enter project ID > ")
-    sys.modules["__main__"].__dict__["User"] = User
+    set_main_variable("User",User)
     userbytoken, users = load_data(int(pid))
     shell = not ("-c" in sys.orig_argv)
     while True:
