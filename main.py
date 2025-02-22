@@ -146,12 +146,12 @@ def init_project(project_id):
 def bbshell_mm():
     try:
         while True:
-            exec(input ("BB >>> "))
+            exec(input("BB >>> "))
     except:
         return
 def bbshell():
     import requests
-    version = 0.4
+    version = 0.5
     print(f"Blockbyte Shell v{str(version)}")
     newversion = float(requests.get("https://pastebin.com/raw/7zMi7wev").text.strip())
     if newversion > version:
@@ -167,7 +167,7 @@ def bbshell():
         print("1. Manual mode")
         print("2. Reset token")
         print("")
-        match input("Enter Number > "):
+        match int(input("Enter Number > ")):
             case 0:
                 save_data(pid,userbytoken,users)
                 sys.exit(0)
