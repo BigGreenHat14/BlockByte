@@ -150,6 +150,7 @@ def bbshell():
     print("Before using, make sure blockbyte isn't running!")
     print("")
     pid = input("Enter project ID > ")
+    sys.modules["__main__"].__dict__["User"] = User
     userbytoken, users = load_data(int(pid))
     shell = not ("-c" in sys.orig_argv)
     while True:
