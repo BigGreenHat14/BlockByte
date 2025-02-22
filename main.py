@@ -141,7 +141,8 @@ def bbshell_mm():
     except:
         return
 def bbshell():
-    print("Blockbyte Shell v0.1")
+    version = 0.2
+    print(f"Blockbyte Shell v{str(version)}")
     print("Before using, make sure blockbyte is not running!")
     print("")
     pid = input("Enter project ID > ")
