@@ -151,7 +151,7 @@ def bbshell_mm():
         return
 def bbshell():
     import requests
-    version = 0.3
+    version = 0.4
     print(f"Blockbyte Shell v{str(version)}")
     newversion = float(requests.get("https://pastebin.com/raw/7zMi7wev").text.strip())
     if newversion > version:
@@ -169,7 +169,7 @@ def bbshell():
         print("")
         match input("Enter Number > "):
             case 0:
-                save_data(pid,usersbytoken,users)
+                save_data(pid,userbytoken,users)
                 sys.exit(0)
             case 1:
                 bbshell_mm()
@@ -182,9 +182,9 @@ def bbshell():
                 uuid = get_uuid()
                 userbytoken[olduuid].uuid = uuid
                 users[names[accindex]] = uuid
-                usersbytoken[uuid] = copy.copy(userbytoken[olduuid])
+                userbytoken[uuid] = copy.copy(userbytoken[olduuid])
                 del userbytoken[olduuid]
-        save_data(pid,usersbytoken,users)
+        save_data(pid,userbytoken,users)
 # Set project
 if __name__ == "__main__":
    init_project(1116465685)
