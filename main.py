@@ -148,7 +148,7 @@ def bbshell_mm():
         try:
             exec(input("BB >>> "))
         except BaseException as e:
-            if type(e) = KeyboardInterrupt:
+            if type(e) == KeyboardInterrupt:
                 break
             else:
                 print(type(e).__name__,":",e)
