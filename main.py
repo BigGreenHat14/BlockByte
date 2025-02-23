@@ -152,6 +152,7 @@ def bbshell_mm(userbytoken, users):
                 break
             else:
                 print(type(e).__name__,":",e)
+    print("\n")
 def bbshell():
     import requests
     version = 0.6
