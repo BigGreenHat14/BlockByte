@@ -143,7 +143,7 @@ def init_project(project_id):
     client.start(thread=False)
     return client
 
-def bbshell_mm():
+def bbshell_mm(userbytoken, users):
     while True:
         try:
             exec(input("BB >>> "))
@@ -175,7 +175,7 @@ def bbshell():
                 save_data(pid,userbytoken,users)
                 sys.exit(0)
             case 1:
-                bbshell_mm()
+                bbshell_mm(userbytoken, users)
             case 2:
                 import copy
                 names = list(users.keys())
