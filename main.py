@@ -4,16 +4,7 @@ import pickle
 import os
 import scratchattach as sa
 import requests
-import sys
 import math
-
-import inspect
-
-def set_main_variable(name: str, value):
-    """Sets a variable in the caller's global scope."""
-    caller_globals = inspect.currentframe().f_back.f_globals
-    caller_globals[name] = value
-    setattr(sys.modules["__main__"],name,value)
 
 # Utility functions for persistent data storage
 def save_data(project_id, userbytoken, users):
@@ -143,54 +134,6 @@ def init_project(project_id):
     client.start(thread=False)
     return client
 
-def bbshell_mm(userbytoken, users):
-    while True:
-        try:
-            exec(input("BB >>> "))
-        except BaseException as e:
-            if type(e) == KeyboardInterrupt:
-                break
-            else:
-                print(type(e).__name__,":",e)
-    print("\n")
-def bbshell():
-    import requests
-    version = 0.6
-    print(f"Blockbyte Shell v{str(version)}")
-    newversion = float(requests.get("https://pastebin.com/raw/7zMi7wev").text.strip())
-    if newversion > version:
-        print(f"\n!!! A new version of the BlockByte server and shell is avaliable, v{str(newversion)} !!!\n(currently v{str(version)})\n")
-    print("Before using, make sure blockbyte isn't running!")
-    print("")
-    pid = input("Enter project ID > ")
-    set_main_variable("User",User)
-    userbytoken, users = load_data(int(pid))
-    shell = not ("-c" in sys.orig_argv)
-    while True:
-        print("0. Exit")
-        print("1. Manual mode")
-        print("2. Reset token")
-        print("")
-        match int(input("Enter Number > ")):
-            case 0:
-                save_data(pid,userbytoken,users)
-                sys.exit(0)
-            case 1:
-                bbshell_mm(userbytoken, users)
-            case 2:
-                import copy
-                names = list(users.keys())
-                print(dict(enumerate(names)))
-                accindex = int(input("Enter Account Index > "))
-                olduuid = users[names[accindex]]
-                uuid = get_uuid()
-                userbytoken[olduuid].uuid = uuid
-                users[names[accindex]] = uuid
-                userbytoken[uuid] = copy.copy(userbytoken[olduuid])
-                del userbytoken[olduuid]
-        save_data(pid,userbytoken,users)
 # Set project
 if __name__ == "__main__":
    init_project(1116465685)
-else:
-    bbshell()
