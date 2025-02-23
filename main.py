@@ -144,14 +144,17 @@ def init_project(project_id):
     return client
 
 def bbshell_mm():
-    try:
-        while True:
+    while True:
+        try:
             exec(input("BB >>> "))
-    except:
-        return
+        except BaseException as e:
+            if type(e) = KeyboardInterrupt:
+                break
+            else:
+                print(type(e).__name__,":",e)
 def bbshell():
     import requests
-    version = 0.5
+    version = 0.6
     print(f"Blockbyte Shell v{str(version)}")
     newversion = float(requests.get("https://pastebin.com/raw/7zMi7wev").text.strip())
     if newversion > version:
